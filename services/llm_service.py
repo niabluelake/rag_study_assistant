@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+from services.model_loader import health_model, ModelNotLoadedError
 
 load_dotenv()
 
@@ -24,17 +25,14 @@ def generate_mock_answer(user_message: str) -> str:
 def generate_trained_answer(user_message: str) -> str:
     prompt = build_health_prompt(user_message)
 
-    # TODO:
-    # 1. Base model 로드
-    # 2. LoRA adapter 로드
-    # 3. tokenizer로 prompt 토큰화
-    # 4. model.generate()
-    # 5. 생성된 텍스트에서 Response 부분만 추출
-
-    return (
-        "아직 학습된 모델이 연결되지 않았습니다. "
-        f"나중에 이 프롬프트로 추론합니다:\n\n{prompt}"
-    )
+    try:
+        return health_model.generate(prompt)
+    except ModelNotLoadedError:
+        return (
+            "아직 학습된 모델이 연결되지 않았습니다.\n\n"
+            "나중에 아래 프롬프트로 튜닝된 모델이 답변하게 됩니다:\n\n"
+            f"{prompt}"
+        )
 
 
 def generate_answer(user_message: str) -> str:

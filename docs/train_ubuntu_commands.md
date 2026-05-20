@@ -23,7 +23,33 @@ pip install -r requirements-train.txt
 
 If `bitsandbytes` fails on your environment, install the other training packages first and then install a compatible `bitsandbytes` version for your CUDA setup.
 
-## 4. Check Dataset
+## 4. Environment Check
+
+Before training, check Python, PyTorch, CUDA, NVIDIA driver, and Hugging Face login.
+
+```bash
+python training/check_environment.py
+```
+
+Expected GPU training environment:
+
+```text
+cuda available: True
+gpu: NVIDIA ...
+```
+
+If CUDA is not available, LoRA training should be moved to a GPU-enabled Cloud Ubuntu environment.
+
+Local CPU-only environment example:
+
+```text
+torch cuda version: None
+cuda available: False
+gpu: CPU only
+warning: LoRA training on CPU is not recommended.
+```
+
+## 5. Check Dataset
 
 ```bash
 python training/check_dataset.py
@@ -37,7 +63,7 @@ data/processed/train.json
 data/processed/eval.json
 ```
 
-## 5. Optional: Convert Raw Data
+## 6. Optional: Convert Raw Data
 
 Run this only when you want to regenerate the processed dataset from `data/raw/health_export.json`.
 
@@ -46,7 +72,7 @@ python scripts/convert_to_alpaca.py
 python training/check_dataset.py
 ```
 
-## 6. Login To Hugging Face
+## 7. Login To Hugging Face
 
 Some base models require access approval and authentication.
 
@@ -54,7 +80,7 @@ Some base models require access approval and authentication.
 huggingface-cli login
 ```
 
-## 7. Start LoRA Training
+## 8. Start LoRA Training
 
 Basic run:
 
@@ -86,7 +112,7 @@ python training/train_lora.py \
   --use-4bit
 ```
 
-## 8. Check Output
+## 9. Check Output
 
 ```bash
 ls -lah outputs/
@@ -99,7 +125,7 @@ The LoRA adapter should be saved under:
 outputs/health_lora_model/
 ```
 
-## 9. Run TensorBoard
+## 10. Run TensorBoard
 
 ```bash
 tensorboard --logdir outputs/health_lora_model --host 0.0.0.0 --port 6006
